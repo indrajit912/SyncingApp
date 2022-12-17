@@ -7,6 +7,7 @@
 
 import getpass
 from pathlib import Path
+from constants import *
 
 
 def current_username():
@@ -29,7 +30,7 @@ def media_path(drive_name:str=None):
 
 
 def main():
-    print(media_path())
+    print(SYNC_IGNORE)
 
 
 if __name__ == '__main__':
