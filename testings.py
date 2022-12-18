@@ -19,8 +19,7 @@ def main():
 
     nodes = [
         DOWNLOADS / "hey",
-        DOWNLOADS / "nice",
-        DOWNLOADS / "japan"
+        DOWNLOADS / "nice"
     ]
 
     syncer = Syncer(nodes=nodes, name="TestSync")
