@@ -10,9 +10,11 @@ from datetime import datetime
 from filecmp import dircmp
 import shutil, os
 
-from .constants import *
+__all__ = ["Syncer"]
 
-# TODO: Add codes for ignoring specific files
+DEFAULT_SYNC_IGNORE = ['.git', '.github', '.env', 'env', '.hg', '.bzr', '_darcs', 
+            '__pycache__', '.log', '.venv', 'venv', 'RCS', 'CVS', 'tags',]
+
 
 class Syncer:
     """
@@ -26,7 +28,12 @@ class Syncer:
         `nodes`: `list[Path(), ... , Path()]` or `list[str, ... , str]  
                 This is the list of paths of directories to be synced!
     """
-    def __init__(self, nodes:list, name:str='Untitled_Syncer', *, log_file:Path=None, **kwargs):
+    def __init__(
+        self, nodes:list, name:str='Untitled_Syncer', *, 
+        log_file:Path=None, 
+        sync_ignore:list=None,
+        sync_hide:list=None
+    ):
 
         self._nodes = [Path(p) for p in nodes] # Come up with a better name
         self._name = name
@@ -36,6 +43,8 @@ class Syncer:
 
         # Setting Kwargs
         self._log_file = Path(__file__).parent.parent / 'sync.log' if log_file is None else log_file
+        self._ignore = DEFAULT_SYNC_IGNORE if sync_ignore is None else sync_ignore
+        self._hide = [os.curdir, os.pardir] if sync_hide is None else sync_hide
 
         # Writing log file
         # self.log(message="Syncer Initialized!")
@@ -66,6 +75,22 @@ class Syncer:
     def dirs_copied(self):
         return self._dirs_copied_count
 
+    @property
+    def ignore(self):
+        return self._ignore
+    
+    @ignore.setter
+    def ignore(self, new_list:list):
+        self._ignore = new_list
+
+    @property
+    def hide(self):
+        return self._hide
+    
+    @hide.setter
+    def hide(self, new_list:list):
+        self._hide = new_list
+
 
     def __repr__(self):
         s = f"""{self.__class__.__name__}(
@@ -76,7 +101,7 @@ class Syncer:
 
 
     def __str__(self):
-        s = f"<class '{self.__class__.name}'>\n   Nodes:\n"
+        s = f"<class : '{self.__class__.__name__}'>\n   Nodes:\n"
         for node in self.nodes:
             s += f"\t- {node}\n"
         return s
@@ -98,7 +123,7 @@ class Syncer:
             print(log_info)
 
 
-    def sync_nodes(self, **kwargs):
+    def sync_nodes(self):
         """
         This methods synchronize all nodes
         """
@@ -108,9 +133,9 @@ class Syncer:
             # If the list has another item after it, sync them
             if self.nodes.index(node) < len(self.nodes) - 1:
                 next_node = self.nodes[self.nodes.index(node) + 1]
+                self._compare_directories(left=node, right=next_node, ignore=self.ignore, hide=self.hide)
                 log_msg = f"Synchronising node ```{node}``` and ```{next_node}```."
                 self.log(message=log_msg)
-                self._compare_directories(left=node, right=next_node, **kwargs)
 
 
         msg = f"TOTAL COUNT: directories_copied = {self._dirs_copied_count} and files_copied = {self._files_copied_count}.\n\n"

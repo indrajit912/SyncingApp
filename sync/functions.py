@@ -7,7 +7,6 @@
 
 import getpass
 from pathlib import Path
-from .constants import *
 
 
 def current_username():

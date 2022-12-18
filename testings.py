@@ -16,15 +16,7 @@ DOWNLOADS = Path.home() / "Downloads"
 
 
 def main():
-
-    nodes = [
-        DOWNLOADS / "hey",
-        DOWNLOADS / "nice"
-    ]
-
-    syncer = Syncer(nodes=nodes, name="TestSync")
-
-    syncer.sync_nodes()
+    pass
 
 
 
