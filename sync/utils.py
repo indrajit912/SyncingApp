@@ -133,9 +133,9 @@ class Syncer:
             # If the list has another item after it, sync them
             if self.nodes.index(node) < len(self.nodes) - 1:
                 next_node = self.nodes[self.nodes.index(node) + 1]
-                self._compare_directories(left=node, right=next_node, ignore=self.ignore, hide=self.hide)
                 log_msg = f"Synchronising node ```{node}``` and ```{next_node}```."
                 self.log(message=log_msg)
+                self._compare_directories(left=node, right=next_node, ignore=self.ignore, hide=self.hide)
 
 
         msg = f"TOTAL COUNT: directories_copied = {self._dirs_copied_count} and files_copied = {self._files_copied_count}.\n\n"
