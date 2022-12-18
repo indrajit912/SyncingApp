@@ -74,6 +74,13 @@ class Syncer:
         return s
 
 
+    def __str__(self):
+        s = f"<class '{self.__class__.name}'>\n   Nodes:\n"
+        for node in self.nodes:
+            s += f"\t- {node}\n"
+        return s
+
+
     def add_node(self, node:Path):
         self._nodes.append(node)
 
@@ -94,6 +101,7 @@ class Syncer:
         """
         This methods synchronize all nodes
         """
+        self.log(message=f"Syncer name: {self.name}")
         # For each node in self.nodes
         for node in self.nodes:
             # If the list has another item after it, sync them
@@ -102,6 +110,11 @@ class Syncer:
                 log_msg = f"Synchronising node ```{node}``` and ```{next_node}```."
                 self.log(message=log_msg)
                 self._compare_directories(left=node, right=next_node, **kwargs)
+
+
+        msg = f"TOTAL COUNT: directories_copied = {self._dirs_copied_count} and files_copied = {self._files_copied_count}.\n\n"
+        self.log(msg)
+
 
     
     def _copy(self, file_list:list, src:Path, dst:Path):

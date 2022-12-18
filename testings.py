@@ -55,12 +55,12 @@ def list_files_and_dirs(path):
 def main():
 
     syncer = Syncer(
-        nodes=[SOURCE_DIR, BACKUP_DIR],
+        nodes=[SOURCE_DIR, BACKUP_DIR, Path.home() / 'Downloads/indra/'],
         name="IndraSync"
     )
 
     syncer.sync_nodes()
-    
+
 
 if __name__ == '__main__':
     main()
