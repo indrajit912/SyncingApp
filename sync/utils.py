@@ -1,4 +1,4 @@
-# Classes for Sync
+# Classes for Synchronising
 #
 # Author: Indrajit Ghosh
 #
@@ -12,6 +12,7 @@ import shutil, os
 
 from .constants import *
 
+# TODO: Add codes for ignoring specific files
 
 class Syncer:
     """
