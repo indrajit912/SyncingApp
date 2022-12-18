@@ -29,6 +29,15 @@ def media_path(drive_name:str=None):
     return Path(f"/media/{current_username()}/{drive_name}")
 
 
+def get_dir_layout(dirpath: Path):
+    """Get list of paths relative to dirpath of all files in dir and subdirs recursively."""
+    for p in dirpath.iterdir():
+        if p.is_dir():
+            yield from get_dir_layout(p)
+            continue
+        yield str(p.relative_to(dirpath))
+
+
 def main():
     print("Functions for Sync.")
 

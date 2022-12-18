@@ -19,4 +19,10 @@ SYNC_IGNORE = [ # This list may be used to create a `.syncignore` file internall
     'ENV/',
     'env.bak',
     'venv.bak',
+    'RCS',
+    'CVS',
+    'tags',
+    '_darcs',
+    '.bzr',
+    '.hg',
 ]

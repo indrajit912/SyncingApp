@@ -13,16 +13,9 @@ import shutil, os
 from .constants import *
 
 
-# TODO: The following class might be used like:
-#           syncObj = Syncer(dirs:list)
-#           syncObj.sync() # Synchronise all dirs inside the list `dirs`
-
-# Ref: "https://gist.github.com/pyrochlore/b754039446ef1583c258b4053cdaf2b4"
-
-
 class Syncer:
     """
-    A class for directories synchronisation class
+    A class for synchronising directories.
 
     Author: Indrajit Ghosh
     Created On: Dec 17, 2022
@@ -171,8 +164,6 @@ class Syncer:
         self._copy(file_list=left_newer_files, src=left, dst=right)
         self._copy(file_list=right_newer_files, src=right, dst=left)
         
-
-
 
 
 def main():
