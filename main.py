@@ -6,7 +6,11 @@
 #
 
 from sync import *
+from filecmp import dircmp
 
+# TODO: Make cmd interface e.g. 
+#       ```sync remote add origin <dir_at_hdd>```
+#       ```sync push origin master```
 
 # Voldemort
 DOCUMENTS = Path.home() / "Documents"
@@ -57,7 +61,14 @@ def sync_indra_mac():
 
 
 def main():
-    pass
+    # sync_indra_mac()
+    nice = Path.home() / "Downloads/nice"
+
+    syncer = Syncer(
+        nodes=[VIDEOS / "movies/", nice],
+    )
+
+    # syncer.sync_nodes()
 
     
 
