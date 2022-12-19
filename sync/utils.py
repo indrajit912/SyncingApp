@@ -13,7 +13,7 @@ import shutil, os
 __all__ = ["Syncer"]
 
 DEFAULT_SYNC_IGNORE = ['.git', '.github', '.env', 'env', '.hg', '.bzr', '_darcs', 
-            '__pycache__', '*.log', '.venv', 'venv', 'RCS', 'CVS', 'tags',]
+            '__pycache__', '.venv', 'venv', 'RCS', 'CVS', 'tags',]
 
 
 class Syncer:
