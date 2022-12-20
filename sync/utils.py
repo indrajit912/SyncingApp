@@ -10,6 +10,8 @@ from datetime import datetime
 from filecmp import dircmp
 import shutil, os
 
+#TODO: Write a logic to automatically add `syncing.ignore` and `.sync` to `.gitignore`
+
 __all__ = ["Syncer", "Syncing"]
 
 DEFAULT_SYNC_IGNORE = [
