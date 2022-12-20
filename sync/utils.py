@@ -19,7 +19,7 @@ DEFAULT_SYNC_IGNORE = [
     '__pycache__', '.venv', 'venv', 'RCS', 'CVS', 'tags', '.sync', 'sync.log',
 ]
 
-GITHUB_REPO_URL = "https://github.com/indrajit912/SyncingAndBackingUp.git"
+GITHUB_REPO_URL = "https://github.com/indrajit912/SyncingApp.git"
 
 
 class Syncer:
