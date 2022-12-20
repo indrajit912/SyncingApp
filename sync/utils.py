@@ -231,7 +231,7 @@ class Syncing:
         self._dot_sync_dir = local / ".sync"
         if not self._dot_sync_dir.exists():
             self._dot_sync_dir.mkdir()
-        # Writing .sync file
+        # Writing .sync dir
         self._add_repo_info_to_dot_sync_dir()
 
         self._syncing_ignore_file = self._local / "syncing.ignore"
