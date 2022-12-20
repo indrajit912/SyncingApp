@@ -13,7 +13,7 @@ import shutil, os
 __all__ = ["Syncer", "Syncing"]
 
 DEFAULT_SYNC_IGNORE = [
-    '.git', '.github', '.env', 'env', '.hg', '.bzr', '_darcs', 
+    '.git', '.github', '.env', 'env', '.hg', '.bzr', '_darcs', 'credentials.json', 'token.json',
     '__pycache__', '.venv', 'venv', 'RCS', 'CVS', 'tags', '.sync', 'sync.log',
 ]
 
@@ -160,10 +160,13 @@ class Syncer:
                 self.log(message=msg)
 
             else:
-                shutil.copy2(src_path, dst)
-                self._files_copied_count += 1
-                msg = f"Copied `{file_or_dir.name}` from ```{src.name}``` to ```{dst.name}```."
-                self.log(message=msg)
+                if not str(src_path) in self._ignore:
+                    shutil.copy2(src_path, dst)
+                    self._files_copied_count += 1
+                    msg = f"Copied `{file_or_dir.name}` from ```{src.name}``` to ```{dst.name}```."
+                    self.log(message=msg)
+                else:
+                    pass
 
     
     def _compare_directories(self, left:Path, right:Path, **kwargs):
@@ -295,7 +298,8 @@ class Syncing:
         with open(self._syncing_ignore_file, 'r') as f:
             for e in f.readlines():
                 if not e.startswith('#') and e != '\n':
-                    self._ignore.append(e.strip())
+                    e_abs = self._local / e.strip()
+                    self._ignore.append(str(e))
 
         self._ignore = list(set(self._ignore))
 
