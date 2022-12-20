@@ -8,13 +8,19 @@
 from sync import *
 import sys, os
 
-
 # My External HDD
 INDRA_MAC = "INDRA_MAC"
 
 VOLDEMORT_AT_HDD = media_path(INDRA_MAC) / "Voldemort"
 HELLO_WORLD_AT_INDRA_MAC = VOLDEMORT_AT_HDD / "hello_world"
 BORINGAUTOMATE_AT_INDRA_MAC = HELLO_WORLD_AT_INDRA_MAC / "BoringAutomate"
+
+
+# TODO: Write an function specifically for syncing into `INDRA_MAC`
+#       This function should able to determine the remote_dir name automaticaly
+#       based on the local_dir name.
+#       If need write several functions for different syncing purposes
+#       e.g. syn_hello_world_to_indra_mac(), etc. etc.
 
 
 def clear_screen():
