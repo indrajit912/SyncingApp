@@ -6,71 +6,115 @@
 #
 
 from sync import *
-from filecmp import dircmp
-
-# TODO: Make cmd interface e.g. 
-#       ```sync remote add origin <dir_at_hdd>```
-#       ```sync push origin master```
-
-# Voldemort
-DOCUMENTS = Path.home() / "Documents"
-VIDEOS = Path.home() / "Videos"
-
-DIRS_AT_VOLDEMORT = [
-    # DOCUMENTS / "hello_world",
-    DOCUMENTS / "Meself_Indra",
-    VIDEOS
-]
+import sys, os
 
 
 # My External HDD
 INDRA_MAC = "INDRA_MAC"
 
+VOLDEMORT_AT_HDD = media_path(INDRA_MAC) / "Voldemort"
+HELLO_WORLD_AT_INDRA_MAC = VOLDEMORT_AT_HDD / "hello_world"
+BORINGAUTOMATE_AT_INDRA_MAC = HELLO_WORLD_AT_INDRA_MAC / "BoringAutomate"
 
-def sync_indra_mac():
 
-    indra_mac = media_path(INDRA_MAC)
-    if not indra_mac.exists():
-        print(f"The HDD with the name `{INDRA_MAC}` is not connected to this PC.")
-    
+def clear_screen():
+    os.system('cls' if os.name=='nt' else 'clear')
+
+
+def syncing_init(local:Path, remote:Path, title:str=None):
+
+    sy = Syncing(
+        local=local,
+        remote=remote,
+        title=title
+    )
+    print("Syncing App initialized with the following info:")
+    print(sy)
+
+
+def read_dot_sync_dir(dot_sync_dir:Path):
+    with open(dot_sync_dir / 'local.txt', 'r') as f:
+        local = Path(f.read())
+
+    with open(dot_sync_dir / 'remote.txt', 'r') as f:
+        remote = Path(f.read())
+
+    title_path = dot_sync_dir / 'title.txt'
+    if title_path.exists():
+        with open(title_path, 'r') as f:
+            title = f.read()
     else:
-        VOLDEMORT_AT_HDD = media_path(INDRA_MAC) / "Voldemort"
+        title = None
 
-        if not VOLDEMORT_AT_HDD.exists():
-            VOLDEMORT_AT_HDD.mkdir()
+    return local, remote, title
 
 
-        # Synchronizing
-        for dir in DIRS_AT_VOLDEMORT:
+def syncing_push():
+    dot_sync_dir = Path.cwd() / ".sync"
+    if not dot_sync_dir.exists():
+        raise Exception("No remote found! First initialize one by the cmd ```syncing init``` ")
 
-            voldemort_dir = VOLDEMORT_AT_HDD / dir.name # directory with the same name at HDD
-            if not voldemort_dir.exists():
-                voldemort_dir.mkdir()
+    else:
+        local, remote, title = read_dot_sync_dir(dot_sync_dir)
+        if remote is None:
+            raise Exception("No remote found! First initialize one by the cmd ```syncing init``` ")
 
-            log_file_path = dir / "sync.log"
+        syncObj = Syncing(local=local, remote=remote, title=title)
+        syncObj.push()
 
-            name = f"Voldemort-{dir.name}-syncer" # Name of the Syncer Obj
-            syncer = Syncer(
-                nodes=[dir, voldemort_dir],
-                name=name,
-                log_file=log_file_path
-            )
 
-            syncer.sync_nodes()
 
+def syncing_app():
+    
+    USAGES = f"""
+    Syncing App
+
+    Author: Indrajit Ghosh
+    Created On: Dec 20, 2022
+
+    Usages:
+        [Initializing] ```syncing init```  
+        [Syncing] ```syncing push```
+    """
+    clear_screen()
+
+    if len(sys.argv) < 2:
+        print(USAGES)
+        sys.exit()
+
+    else:
+        if sys.argv[1] == 'init':
+            local_dir = Path.cwd()
+            dot_sync_dir = local_dir / '.sync'
+            res = 'y'
+            if dot_sync_dir.exists():
+                remote_txt = dot_sync_dir / 'remote.txt'
+                saved_remote = open(remote_txt, 'r').read()
+                if saved_remote is not None:
+                    print(f"WARNING: There is already a remote dir exists at:\n   {saved_remote}")
+                    res = input("Do you still continue to replace this old one?(y/n): ")
+                    if res.lower() not in ['y', 'yes', 'n', 'no']:
+                        raise Exception(f"Wrong input {res}!")
+            
+            if res in ['y', 'yes']:
+                remote_dir = Path(input("Enter the path of the remote dir: "))
+                title = input("Enter a title (If you don't have any simply hit <ENTER>): ")
+                title = None if title == '' else title
+
+                if not remote_dir.exists():
+                    raise Exception(f"The remote directory {remote_dir} doesn't exits!")
+
+                syncing_init(local=local_dir, remote=remote_dir, title=title)
+            else:
+                print("Okay! No changes made.")
+        
+        elif sys.argv[1] == 'push':
+            syncing_push()
 
 
 def main():
-    # sync_indra_mac()
-    nice = Path.home() / "Downloads/nice"
+    syncing_app()
 
-    syncer = Syncer(
-        nodes=[VIDEOS / "movies/", nice],
-    )
-
-    # syncer.sync_nodes()
-
-    
 
 if __name__ == '__main__':
     main()

@@ -10,10 +10,14 @@ from datetime import datetime
 from filecmp import dircmp
 import shutil, os
 
-__all__ = ["Syncer"]
+__all__ = ["Syncer", "Syncing"]
 
-DEFAULT_SYNC_IGNORE = ['.git', '.github', '.env', 'env', '.hg', '.bzr', '_darcs', 
-            '__pycache__', '.venv', 'venv', 'RCS', 'CVS', 'tags',]
+DEFAULT_SYNC_IGNORE = [
+    '.git', '.github', '.env', 'env', '.hg', '.bzr', '_darcs', 
+    '__pycache__', '.venv', 'venv', 'RCS', 'CVS', 'tags', '.sync', 'sync.log',
+]
+
+GITHUB_REPO_URL = "https://github.com/indrajit912/SyncingAndBackingUp.git"
 
 
 class Syncer:
@@ -141,7 +145,6 @@ class Syncer:
         msg = f"TOTAL COUNT: directories_copied = {self._dirs_copied_count} and files_copied = {self._files_copied_count}.\n\n"
         self.log(msg)
 
-
     
     def _copy(self, file_list:list, src:Path, dst:Path):
         """
@@ -179,7 +182,7 @@ class Syncer:
         
         if comparison.common_dirs:
             for dir_name in comparison.common_dirs:
-                self._compare_directories(left=left / dir_name, right=right / dir_name)
+                self._compare_directories(left=left / dir_name, right=right / dir_name, **kwargs)
 
         if comparison.left_only:
             self._copy(file_list=comparison.left_only, src=left, dst=right)
@@ -202,7 +205,121 @@ class Syncer:
         
         self._copy(file_list=left_newer_files, src=left, dst=right)
         self._copy(file_list=right_newer_files, src=right, dst=left)
+
+
+class Syncing:
+    """
+    A class which provides an interface to sync between `local` and `remote` repo
+    just like `git`
+
+    Author: Indrajit Ghosh
+    Created On: Dec 20, 2022
+    """
+
+    def __init__(self, local:Path, remote:Path, title:str=None, ignore:list=None):
         
+        self._local = local
+        self._remote = remote
+        self._title = self.local.name if title is None else title
+        self._ignore = DEFAULT_SYNC_IGNORE if ignore is None else DEFAULT_SYNC_IGNORE + ignore
+
+        self._dot_sync_dir = local / ".sync"
+        if not self._dot_sync_dir.exists():
+            self._dot_sync_dir.mkdir()
+        # Writing .sync file
+        self._add_repo_info_to_dot_sync_dir()
+
+        self._syncing_ignore_file = self._local / "syncing.ignore"
+    
+    
+    def __repr__(self):
+        return f"{self.__class__.__name__}(local={self._local},\nremote={self._remote}\n)"
+
+    
+    @property
+    def local(self):
+        return self._local
+
+    @local.setter
+    def local(self, new):
+        self._local = new
+
+    @property
+    def remote(self):
+        return self._remote
+
+    @remote.setter
+    def remote(self, new):
+        self._remote = new
+
+    @property
+    def title(self):
+        return self._title
+
+    @title.setter
+    def title(self, new):
+        self._title = new
+    
+    @property
+    def ignore(self):
+        return self._ignore
+
+    @ignore.setter
+    def ignore(self, new):
+        self._ignore = new
+
+
+    def _add_repo_info_to_dot_sync_dir(self):
+        with open(self._dot_sync_dir / "local.txt", 'w') as f:
+            f.write(str(self._local))
+        with open(self._dot_sync_dir / "remote.txt", "w") as f:
+            f.write(str(self._remote))
+        with open(self._dot_sync_dir / "title.txt", "w") as f:
+            f.write(self._title)
+
+
+    def _write_syncing_ignore_file(self):
+        with open(self._syncing_ignore_file, "w") as f:
+            f.write(f"# All the following files will be ignored by the App Syncing\n# Author: Indrajit Ghosh\n")
+            f.write(f"# Email: indrajitghosh912@gmail.com\n")
+            f.write(f"# Github Repo for Syncing App: {GITHUB_REPO_URL}\n")
+            f.write(f"# --------------------------------------------------\n\n")
+            for ignore in self._ignore:
+                f.write(ignore)
+                f.write('\n')
+
+    def _update_syncing_ignore_file(self):
+        if not self._syncing_ignore_file.exists():
+            self._write_syncing_ignore_file()
+
+        with open(self._syncing_ignore_file, 'r') as f:
+            for e in f.readlines():
+                if not e.startswith('#') and e != '\n':
+                    self._ignore.append(e.strip())
+
+        self._ignore = list(set(self._ignore))
+
+
+    def push(self):
+        """
+        This sync all files inside `local` to a dir inside `remote`
+        If `repo_name` is None then it will be set to `local.parent.name`
+        """
+        sync_title = f"{self._title}-sync"
+        
+        self._update_syncing_ignore_file()
+
+        syncer = Syncer(
+            name=sync_title,
+            nodes=[
+                self.local,
+                self.remote
+            ],
+            sync_ignore=self._ignore
+        )
+
+        syncer.sync_nodes()
+
 
 
 def main():
