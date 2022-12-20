@@ -297,6 +297,11 @@ class Syncing:
     def _update_syncing_ignore_file(self):
         if not self._syncing_ignore_file.exists():
             self._write_syncing_ignore_file()
+            # Adding 'syncing.ignore' to '.gitignore'
+            gitignore = self._local / '.gitignore'
+            if gitignore.exists():
+                # TODO: add syncing.ignore
+                pass
 
         with open(self._syncing_ignore_file, 'r') as f:
             for e in f.readlines():
