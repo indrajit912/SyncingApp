@@ -124,6 +124,7 @@ class Syncer:
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         log_info = '[' + now + '] ' + message + '\n'
+        # TODO: If self._log_file not exists then add it ti '.gitignore'
         with open(self._log_file, 'a') as l:
             l.write(log_info)
             print(log_info)
