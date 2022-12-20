@@ -306,7 +306,7 @@ class Syncing:
         with open(self._syncing_ignore_file, 'r') as f:
             for e in f.readlines():
                 if not e.startswith('#') and e != '\n':
-                    e_abs = self._local / e.strip()
+                    e = self._local / e.strip()
                     self._ignore.append(str(e))
 
         self._ignore = list(set(self._ignore))
