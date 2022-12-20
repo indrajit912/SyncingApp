@@ -233,6 +233,7 @@ class Syncing:
         self._add_repo_info_to_dot_sync_dir()
 
         self._syncing_ignore_file = self._local / "syncing.ignore"
+        self._update_syncing_ignore_file()
     
     
     def __repr__(self):
