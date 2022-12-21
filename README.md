@@ -8,7 +8,6 @@
 
 ```sh
 git clone https://github.com/indrajit912/SyncingApp.git
-cd SyncingApp.git
 ```
 
 ## Requirements
