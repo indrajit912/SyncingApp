@@ -155,7 +155,14 @@ class Syncer:
         for file_or_dir in file_list:
             src_path = src / file_or_dir.name
             if src_path.is_dir():
-                shutil.copytree(src_path, dst=dst / file_or_dir.name)
+                shutil.copytree(
+                    src_path, 
+                    dst=dst / file_or_dir.name, 
+                    ignore=shutil.ignore_patterns(
+                        '*.pyc', '*.log',
+                        *self._ignore
+                    )
+                )
                 self._dirs_copied_count += 1
                 msg = f"Copied directory `{file_or_dir.name}` from ```{src.name}``` to ```{dst.name}```."
                 self.log(message=msg)
