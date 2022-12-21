@@ -10,7 +10,6 @@ from datetime import datetime
 from filecmp import dircmp
 import shutil, os
 
-#TODO: Write a logic to automatically add `syncing.ignore` and `.sync` to `.gitignore`
 
 __all__ = ["Syncer", "Syncing"]
 
@@ -124,7 +123,6 @@ class Syncer:
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         log_info = '[' + now + '] ' + message + '\n'
-        # TODO: If self._log_file not exists then add it ti '.gitignore'
         with open(self._log_file, 'a') as l:
             l.write(log_info)
             print(log_info)
@@ -284,6 +282,13 @@ class Syncing:
         with open(self._dot_sync_dir / "title.txt", "w") as f:
             f.write(self._title)
 
+        # Add `.sync` to `.gitignore`
+        gitignore = self._local / '.gitignore'
+        if gitignore.exists():
+            # Add .sync
+            with open(gitignore, 'a') as f:
+                f.write(self._dot_sync_dir.name + '\n')
+
 
     def _write_syncing_ignore_file(self):
         with open(self._syncing_ignore_file, "w") as f:
@@ -301,8 +306,9 @@ class Syncing:
             # Adding 'syncing.ignore' to '.gitignore'
             gitignore = self._local / '.gitignore'
             if gitignore.exists():
-                # TODO: add syncing.ignore
-                pass
+                # Add syncing.ignore
+                with open(gitignore, 'a') as f:
+                    f.write(self._syncing_ignore_file.name + '\n')
 
         with open(self._syncing_ignore_file, 'r') as f:
             for e in f.readlines():

@@ -1,7 +1,6 @@
 
 
 ### Python ###
-.sync/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -165,3 +164,6 @@ cython_debug/
 #.idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/python
+.sync
+syncing.ignore
+.sync
