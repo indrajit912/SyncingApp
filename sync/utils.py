@@ -8,7 +8,7 @@
 from pathlib import Path
 from datetime import datetime
 from filecmp import dircmp
-import shutil, os
+import shutil, os, time
 
 
 __all__ = ["Syncer", "Syncing"]
@@ -133,6 +133,7 @@ class Syncer:
         This methods synchronize all nodes
         """
         self.log(message=f"Syncer name: {self.name}")
+        t1 = time.time()
         # For each node in self.nodes
         for node in self.nodes:
             # If the list has another item after it, sync them
@@ -142,9 +143,13 @@ class Syncer:
                 self.log(message=log_msg)
                 self._compare_directories(left=node, right=next_node, ignore=self.ignore, hide=self.hide)
 
-
-        msg = f"TOTAL COUNT: directories_copied = {self._dirs_copied_count} and files_copied = {self._files_copied_count}.\n\n"
+        msg = f"TOTAL COUNT: directories_copied = {self._dirs_copied_count} and files_copied = {self._files_copied_count}."
         self.log(msg)
+        
+        # Adding timestamp to the log file
+        t2 = time.time()
+        time_msg = f"TIME TAKEN: {self.format_time(t2 - t1)}\n\n"
+        self.log(time_msg)
 
     
     def _copy(self, file_list:list, src:Path, dst:Path):
@@ -216,6 +221,28 @@ class Syncer:
         
         self._copy(file_list=left_newer_files, src=left, dst=right)
         self._copy(file_list=right_newer_files, src=right, dst=left)
+
+    @staticmethod
+    def format_time(time:float):
+        """
+        This method formats a given time in sec and returns a str for it.
+        For example, 
+        >>> format_time(time=46)
+            '45 s'
+        >>> format_time(time=67)
+            '1m 7s'
+        >>> format_time(time=130)
+            '2h 10m'
+        """
+        s = time % 60
+        m = int((time - s) / 60) % 60
+        h = int((((time - s) / 60) - m) / 60)
+        
+        s_str = f'{s}s' if s > 0 else ''
+        m_str = f"{m}m " if m > 0 else ''
+        h_str = f"{h}h " if h > 0 else ''
+
+        return h_str + m_str + s_str
 
 
 class Syncing:
@@ -345,7 +372,6 @@ class Syncing:
         )
 
         syncer.sync_nodes()
-
 
 
 def main():
