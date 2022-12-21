@@ -15,7 +15,7 @@ __all__ = ["Syncer", "Syncing"]
 
 DEFAULT_SYNC_IGNORE = [
     '.git', '.github', '.env', 'env', '.hg', '.bzr', '_darcs', 'credentials.json', 'token.json',
-    '__pycache__', '.venv', 'venv', 'RCS', 'CVS', 'tags', '.sync', 'sync.log', 'token.json',
+    '__pycache__', '.venv', 'venv', 'RCS', 'CVS', 'tags', '.sync', 'sync.log', 'keys.json',
 ]
 
 GITHUB_REPO_URL = "https://github.com/indrajit912/SyncingApp.git"
