@@ -120,7 +120,7 @@ class Syncer:
         """
         This function appends the message into LOG file
         """
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        now = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
         log_info = '[' + now + '] ' + message + '\n'
         with open(self._log_file, 'a') as l:
