@@ -7,9 +7,8 @@
 ## Installation
 
 ```sh
-# This won’t actually work unless you magically have the same library as I.
-make references.bib
-make thesis
+git clone https://github.com/indrajit912/SyncingApp.git
+cd SyncingApp.git
 ```
 
 ## Requirements
