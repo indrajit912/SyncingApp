@@ -141,7 +141,7 @@ class Syncer:
                 next_node = self.nodes[self.nodes.index(node) + 1]
                 log_msg = f"Synchronising node ```{node}``` and ```{next_node}```."
                 self.log(message=log_msg)
-                self._compare_directories(left=node, right=next_node, ignore=self.ignore, hide=self.hide)
+                self._compare_directories(left=node, right=next_node, ignore=self._ignore, hide=self.hide)
 
         msg = f"TOTAL COUNT: directories_copied = {self._dirs_copied_count} and files_copied = {self._files_copied_count}."
         self.log(msg)
@@ -159,7 +159,7 @@ class Syncer:
         file_list = [Path(p) for p in file_list]
         for file_or_dir in file_list:
             src_path = src / file_or_dir.name
-            if src_path.is_dir():
+            if src_path.is_dir() and not str(src_path) in self._ignore:
                 shutil.copytree(
                     src_path, 
                     dst=dst / file_or_dir.name, 
