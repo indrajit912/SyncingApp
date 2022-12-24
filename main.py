@@ -8,6 +8,9 @@
 from sync import *
 import sys, os
 
+# TODO: there is a bug! this script is generating `syncing.ignore` at Path(__file__).parent
+#       This should not be the case at all. Fix this.
+
 # My External HDD
 INDRA_MAC = "INDRA_MAC"
 
@@ -58,7 +61,18 @@ def syncing_push():
         if remote is None:
             raise Exception("No remote found! First initialize one by the cmd ```syncing init``` ")
 
-        syncObj = Syncing(local=local, remote=remote, title=title)
+        # Check whether `syncing.ignore` exists or not if so read it and pass its values
+        #       through Syncing(ignore=)
+        local_syncing_ignore_file = local / 'syncing.ignore'
+        _ignore = []
+        if local_syncing_ignore_file.exists():
+            with open(local_syncing_ignore_file, 'r') as f:
+                for e in f.readlines():
+                    if not e.startswith('#') and e != '\n':
+                        e = local / e.strip()
+                        _ignore.append(str(e))
+        
+        syncObj = Syncing(local=local, remote=remote, title=title, ignore=_ignore)
         syncObj.push()
 
 
